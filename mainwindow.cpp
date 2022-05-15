@@ -21,9 +21,9 @@ void MainWindow::on_refresh_button_clicked()
     ui->image->recreate_raster(ui->size_x->value(), ui->size_y->value());
 }
 
-void MainWindow::image_mouse_move(int x, int y)
+void MainWindow::image_mouse_move(QString msg)
 {
-    ui->statusbar->showMessage(QString::number(x) + "/" + QString::number(y), 3000);
+    ui->statusbar->showMessage(msg, 3000);
 }
 
 

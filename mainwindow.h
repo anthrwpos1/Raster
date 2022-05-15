@@ -17,7 +17,7 @@ public:
 
 private slots:
     void on_refresh_button_clicked();
-    void image_mouse_move(int x, int y);
+    void image_mouse_move(QString msg);
 
     void on_resample_button_clicked();
 
