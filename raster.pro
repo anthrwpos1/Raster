@@ -11,10 +11,12 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    mandelbrot.cpp \
     raster_label.cpp
 
 HEADERS += \
     mainwindow.h \
+    mandelbrot.h \
     raster_label.h
 
 FORMS += \

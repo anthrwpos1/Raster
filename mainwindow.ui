@@ -77,14 +77,17 @@
           <property name="decimals">
            <number>1</number>
           </property>
+          <property name="minimum">
+           <double>-5.000000000000000</double>
+          </property>
           <property name="maximum">
-           <double>10.000000000000000</double>
+           <double>40.000000000000000</double>
           </property>
           <property name="stepType">
            <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
           </property>
           <property name="value">
-           <double>1.000000000000000</double>
+           <double>0.000000000000000</double>
           </property>
          </widget>
         </item>

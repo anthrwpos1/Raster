@@ -1,94 +1,22 @@
 #include "raster_label.h"
-#include <iostream>
-
-struct color3
-{
-    double _c1, _c2, _c3;
-};
-
-color3 rgb2xyz(const color3& in)
-{
-    return {in._c1 * 0.4123955889674142 + in._c2 * 0.3575834307637148 + in._c3 * 0.1804926473817016,
-                in._c1 * 0.2125862307855955 + in._c2 * 0.7151703037034108 + in._c3 * 0.07220049864333621,
-                in._c1 * 0.01929721549174694 + in._c2 * 0.1191838645808485 + in._c3 * 0.9504971251315798};
-}
-
-double af(double t)
-{
-    return t * t * t * (t > 6/29) + (3 * 36/841 * (t-4/29)) * (t <= 6/29);
-}
-
-void imlab2xyz(double* array, int shift, double* output_array)
-{
-    int shift2 = shift * 2;
-    for (int i = 0; i < shift; ++i)
-    {
-        double L = (array[i] + 16)/116;
-        output_array[i] = af(L+array[i+shift]/500.0);
-        output_array[i + shift] = af(L);
-        output_array[i + shift2] = af(L-array[i+shift2]/200.0);
-    }
-}
-
-void imxyz2rgb(double* array, int shift, double* output_array)
-{
-    int shift2 = shift * 2;
-    for (int i = 0; i < shift; ++i)
-    {
-        double x = array[i];
-        double y = array[i+shift];
-        double z = array[i+shift2];
-        output_array[i] = x * 3.2406 + y * -1.5372 + z * -0.4986;
-        output_array[i + shift] = x * -0.9689 + y * 1.8758 + z * 0.0415;
-        output_array[i + shift2] = x * 0.0557 + y * -0.204 + z * 1.057;
-    }
-    for (int i = 0; i < shift * 3; ++i)
-    {
-        double linear = output_array[i];
-        double nonlinear = ((linear*12.92)*(linear<=0.0031308)+((1+0.055)*exp(log(linear)*(1/2.4))-0.055)*(linear>0.0031308));
-        nonlinear = nonlinear * (nonlinear > 0) * (nonlinear < 1) + (nonlinear > 1);
-        output_array[i] = nonlinear*255.0;
-    }
-}
-
-void imlab2rgb(double* array, int shift, double* output_array)
-{
-    color3 white65 = rgb2xyz({1, 1, 1});
-    double* temp = new double[shift * 3];
-    imlab2xyz(array,shift, temp);
-    int shift2 = shift * 2;
-    for (int i = 0; i < shift; ++i) temp[i] *= white65._c1;
-    for (int i = 0; i < shift; ++i) temp[i + shift] *= white65._c2;
-    for (int i = 0; i < shift; ++i) temp[i + shift2] *= white65._c3;
-    imxyz2rgb(temp, shift, output_array);
-    delete[] temp;
-}
-
-template<class T>
-void list_filter (std::list<T>& list,const std::vector<bool>& elements_to_leave)
-{
-    auto list_iterator = list.begin();
-    int i = 0;
-    while ((list_iterator != list.end()) && i < elements_to_leave.size()) {
-        if (elements_to_leave[i])
-        {
-            list_iterator = list.erase(list_iterator);
-        }
-        else
-            ++list_iterator;
-        ++i;
-    }
-}
 
 void raster_label::mouseMoveEvent(QMouseEvent *event)
 {
-    int index = event->y()*raster->width() + event->x();
-    if (index < raster->width()*raster->height())
-    {
-        double point = clrindx[index];
-        emit mouse_move(QString::number(point));
-    }
+    auto coords = get_coord(event->x(), event->y());
+    //int index = y*raster->width() + x;
+    //if (index < raster->width()*raster->height())
+    //{
+    //double point = clrindx[index];
+    emit mouse_move("coord x = " + QString::number(coords[0]) + ", coord y = " + QString::number(coords[1]));
+    //}
     QLabel::mouseMoveEvent(event);
+}
+
+
+void raster_label::mousePressEvent(QMouseEvent *event)
+{
+    auto coords = get_coord(event->x(), event->y());
+    _ccp = complex{coords[0], coords[1]};
 }
 
 void raster_label::resizeEvent(QResizeEvent *event)
@@ -103,21 +31,16 @@ raster_label::raster_label(QWidget *parent, const Qt::WindowFlags &f) :
     QLabel(parent, f),
     raster(new QImage(800,600,QImage::Format_RGB32)),
     _coef(1.0),
-    points(new mandelbrot_point[800*600])
+    points(new mandelbrot[800*600])
 {}
 
 void raster_label::recreate_raster(int new_x, int new_y)
 {
     delete raster;
     delete[] points;
-    points = new mandelbrot_point[new_x * new_y];
+    points = new mandelbrot[new_x * new_y];
     raster = new QImage(new_x, new_y, QImage::Format_RGB32);
     recalculate();
-}
-
-void calcuclate_points(mandelbrot_point* points, int from, int to, int stepmax)
-{
-    for (int i = from; i < to; ++i) points[i].process(stepmax);
 }
 
 color3 interp1(double* RGB, int rgb_size, double clrindex)
@@ -140,10 +63,9 @@ void raster_label::recalculate()
 {
     qint32 iw = raster->width();
     qint32 ih = raster->height();
-    complex ccp = 0.0;
-    double xcp = ccp.real();//координаты центральной точки
-    double ycp = ccp.imag();
-    double msst = 2;//массштабный коэффициент
+    double xcp = _ccp.real();//координаты центральной точки
+    double ycp = _ccp.imag();
+    double msst = exp(-log(2)*_coef);//массштабный коэффициент
     int mmax = 1000;//предельное число итераций (1000..1000000)
 
     //вектор раскраски
@@ -164,13 +86,15 @@ void raster_label::recalculate()
     delete[] LAB;
 
     int index = 0;
-    double diagonal = sqrt(ih*ih+iw*iw);
+    double pixel_size = msst / sqrt(ih*ih+iw*iw);
+    double x_corner = xcp - iw * pixel_size / 2.0;
+    double y_corner = ycp + ih * pixel_size / 2.0;
     for (int iy = 0; iy < ih; ++iy)
     {
-        double cy = ycp + (0.5 - iy / diagonal)*msst;
+        double cy = y_corner - iy * pixel_size;
         for (int ix = 0; ix < iw; ++ix)
         {
-            double cx = xcp + (ix / diagonal - 0.5)*msst;
+            double cx = x_corner + ix * pixel_size;
             points[index++] ={0, {cx, cy}, 0, 0};
         }
     }
@@ -216,25 +140,28 @@ void raster_label::set_coef(double coef)
     _coef = coef;
 }
 
+
+//находит внутренние координаты модели по координатам в окне
+std::unique_ptr<double[]> raster_label::get_coord(int x, int y)
+{
+    double iw = raster->width();
+    double ih = raster->height();
+    double dissize_x = width() / iw;
+    double dissize_y = height() / ih;
+    double zoom = std::max(dissize_x, dissize_y);
+    double msst = exp(-log(2)*_coef);
+    double pixel_size = msst / sqrt(ih*ih+iw*iw);
+    double x_corner = _ccp.real() - iw * pixel_size / 2.0;
+    double y_center = _ccp.imag();
+    pixel_size /= zoom;
+    std::unique_ptr<double[]> out(new double[2]);
+    out[0] = x_corner + x * pixel_size;
+    out[1] = y_center - (y - height() / 2.0) * pixel_size;
+    return out;
+}
+
 raster_label::~raster_label()
 {
     delete raster;
     delete[] points;
-}
-
-void mandelbrot_point::process(int mmax)
-{
-    double abs2;
-    while(step < mmax)
-    {
-        z = z * z + c;
-        ++step;
-        abs2 = z.real() * z.real() + z.imag() * z.imag();
-        if (abs2 > 1e10) break;
-    }
-    if (step == mmax) steps = 0;
-    else
-    {
-        steps = step-log(abs2/1e20)/log(1e10);
-    }
 }
