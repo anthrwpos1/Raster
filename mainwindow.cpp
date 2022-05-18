@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->image->recalculate();
     connect(ui->image, &raster_label::mouse_move, this, &MainWindow::image_mouse_move);
     connect(ui->image, &raster_label::mouse_pressed, this, &MainWindow::image_mouse_pressed);
+    connect(ui->image, &raster_label::calculation_started, this, &MainWindow::image_calculations_begin);
+    connect(ui->image, &raster_label::calculation_finished, this, &MainWindow::image_calculations_end);
 }
 
 MainWindow::~MainWindow()
@@ -18,10 +20,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_refresh_button_clicked()
 {
-    ui->image->set_coef(ui->coef->value());
-    ui->image->set_steps(ui->steps->value());
-    ui->image->recreate_raster(ui->size_x->value(), ui->size_y->value());
-    ui->image->set_coords(ui->coord_x->value(), ui->coord_y->value());
+    if (ui->image->is_calculations_in_progress())
+    {
+        ui->image->interrupt_calculation();
+    }
+    else
+    {
+        ui->image->set_coef(ui->coef->value());
+        ui->image->set_steps(ui->steps->value());
+        ui->image->recreate_raster(ui->size_x->value(), ui->size_y->value());
+        ui->image->set_coords(ui->coord_x->value(), ui->coord_y->value());
+    }
 }
 
 void MainWindow::image_mouse_move(QString msg)
@@ -33,6 +42,16 @@ void MainWindow::image_mouse_pressed(double x, double y)
 {
     ui->coord_x->setValue(x);
     ui->coord_y->setValue(y);
+}
+
+void MainWindow::image_calculations_begin()
+{
+    ui->refresh_button->setText("Прервать");
+}
+
+void MainWindow::image_calculations_end()
+{
+    ui->refresh_button->setText("Обновить");
 }
 
 
