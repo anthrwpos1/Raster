@@ -38,57 +38,153 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QSpinBox" name="size_x">
-          <property name="suffix">
-           <string> pix</string>
+         <widget class="QGroupBox" name="resolutionGroupBox">
+          <property name="title">
+           <string>Разрешение</string>
           </property>
-          <property name="prefix">
-           <string>x = </string>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
-          <property name="maximum">
-           <number>1920</number>
-          </property>
-          <property name="value">
-           <number>800</number>
-          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QSpinBox" name="size_x">
+             <property name="suffix">
+              <string> pix</string>
+             </property>
+             <property name="prefix">
+              <string>x = </string>
+             </property>
+             <property name="maximum">
+              <number>3840</number>
+             </property>
+             <property name="value">
+              <number>800</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="size_y">
+             <property name="suffix">
+              <string> pix</string>
+             </property>
+             <property name="prefix">
+              <string>y = </string>
+             </property>
+             <property name="maximum">
+              <number>2160</number>
+             </property>
+             <property name="value">
+              <number>600</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="size_y">
-          <property name="suffix">
-           <string> pix</string>
+         <widget class="QGroupBox" name="zoomGroupBox">
+          <property name="title">
+           <string>Масштаб</string>
           </property>
-          <property name="prefix">
-           <string>y = </string>
-          </property>
-          <property name="maximum">
-           <number>1080</number>
-          </property>
-          <property name="value">
-           <number>600</number>
-          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QDoubleSpinBox" name="coef">
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="minimum">
+              <double>-5.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>40.000000000000000</double>
+             </property>
+             <property name="stepType">
+              <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+             </property>
+             <property name="value">
+              <double>0.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="coef">
-          <property name="buttonSymbols">
-           <enum>QAbstractSpinBox::NoButtons</enum>
+         <widget class="QGroupBox" name="stepsGroupBox">
+          <property name="title">
+           <string>макс. число шагов</string>
           </property>
-          <property name="decimals">
-           <number>1</number>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QSpinBox" name="steps">
+             <property name="minimum">
+              <number>1000</number>
+             </property>
+             <property name="maximum">
+              <number>1000000</number>
+             </property>
+             <property name="singleStep">
+              <number>1000</number>
+             </property>
+             <property name="stepType">
+              <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="placeGroupBox">
+          <property name="title">
+           <string>координаты</string>
           </property>
-          <property name="minimum">
-           <double>-5.000000000000000</double>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
-          <property name="maximum">
-           <double>40.000000000000000</double>
-          </property>
-          <property name="stepType">
-           <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
-          </property>
-          <property name="value">
-           <double>0.000000000000000</double>
-          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QDoubleSpinBox" name="coord_x">
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="decimals">
+              <number>16</number>
+             </property>
+             <property name="minimum">
+              <double>-2.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>2.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="coord_y">
+             <property name="buttonSymbols">
+              <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="decimals">
+              <number>16</number>
+             </property>
+             <property name="minimum">
+              <double>-2.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>2.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
@@ -147,14 +243,14 @@
       <item>
        <widget class="QPushButton" name="refresh_button">
         <property name="text">
-         <string>refresh_size</string>
+         <string>Обновить</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="resample_button">
         <property name="text">
-         <string>fit size</string>
+         <string>подогнать</string>
         </property>
        </widget>
       </item>

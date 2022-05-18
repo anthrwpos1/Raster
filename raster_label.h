@@ -13,6 +13,7 @@ class raster_label : public QLabel
 
     QImage* raster;
     double _coef;
+    int _max_steps = 1000;
     mandelbrot* points;
     double* clrindx = nullptr;
     complex _ccp;
@@ -21,10 +22,13 @@ public:
     void recreate_raster(int new_x, int new_y);
     void recalculate();
     void set_coef(double coef);
+    void set_steps(double steps);
+    void set_coords(double xcp, double ycp);
     std::unique_ptr<double[]> get_coord(int x, int y);
     ~raster_label();
 Q_SIGNALS:
     void mouse_move(QString msg);
+    void mouse_pressed(double xcp, double ycp);
 
     // QWidget interface
 protected:

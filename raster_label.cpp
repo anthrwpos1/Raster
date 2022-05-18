@@ -17,6 +17,7 @@ void raster_label::mousePressEvent(QMouseEvent *event)
 {
     auto coords = get_coord(event->x(), event->y());
     _ccp = complex{coords[0], coords[1]};
+    emit mouse_pressed(coords[0], coords[1]);
 }
 
 void raster_label::resizeEvent(QResizeEvent *event)
@@ -66,20 +67,19 @@ void raster_label::recalculate()
     double xcp = _ccp.real();//координаты центральной точки
     double ycp = _ccp.imag();
     double msst = exp(-log(2)*_coef);//массштабный коэффициент
-    int mmax = 1000;//предельное число итераций (1000..1000000)
 
     //вектор раскраски
-    double* clri = new double[1000];
+    double clri;
     double* LAB = new double[3000];
     for (int i = 0; i < 1000; ++i)
     {
-        clri[i] = (i+1)/1000.0;
-        LAB[i] = clri[i] * clri[i] * 100.0;
+        clri = (i+1)/1000.0;
+        LAB[i] = clri * clri * 100.0;
         double C;
         if (i < 990) C = (i + 1) / 10.0;
         else C = (999 - i) * 10.0;
-        LAB[i+1000] = C * cos(2*M_PI*-3 + 0.2857);
-        LAB[i+2000] = C * sin(2*M_PI*-3 + 0.2857);
+        LAB[i+1000] = C * sin(2*M_PI*-3*clri + 0.2857);
+        LAB[i+2000] = C * cos(2*M_PI*-3*clri + 0.2857);
     }
     double* RGB = new double[3000];
     imlab2rgb(LAB, 1000, RGB);
@@ -98,13 +98,13 @@ void raster_label::recalculate()
             points[index++] ={0, {cx, cy}, 0, 0};
         }
     }
-    for (int i = 0; i < ih * iw; ++i) points[i].process(mmax);
-    int* ds = new int[mmax]{0};
-    int* ids = new int[mmax + 1];
-    for (int i = 0; i < ih * iw; ++i) ds[(int) std::floor(points[i].steps)] += (points[i].steps > 0);
+    for (int i = 0; i < ih * iw; ++i) points[i].process(_max_steps);
+    int* ds = new int[_max_steps]{0};
+    int* ids = new int[_max_steps + 1];
+    for (int i = 0; i < ih * iw; ++i) ds[(int) std::floor(points[i].steps)] += 1;//(points[i].steps > 0);
     ids[0] = 0;
-    for (int i = 1; i < mmax + 1; ++i) ids[i] = ids[i-1] + ds[i-1];
-    double ids_end = ids[mmax];
+    for (int i = 1; i < _max_steps + 1; ++i) ids[i] = ids[i-1] + ds[i-1];
+    double ids_end = ids[_max_steps];
     if(ids_end == 0) ids_end = 1;
     delete[] clrindx;
     clrindx = new double[iw*ih];
@@ -132,7 +132,6 @@ void raster_label::recalculate()
     delete[] ids;
     delete[] ds;
     delete[] RGB;
-    delete[] clri;
 }
 
 void raster_label::set_coef(double coef)
@@ -140,6 +139,15 @@ void raster_label::set_coef(double coef)
     _coef = coef;
 }
 
+void raster_label::set_steps(double steps)
+{
+    _max_steps = steps;
+}
+
+void raster_label::set_coords(double xcp, double ycp)
+{
+    _ccp = {xcp, ycp};
+}
 
 //находит внутренние координаты модели по координатам в окне
 std::unique_ptr<double[]> raster_label::get_coord(int x, int y)
