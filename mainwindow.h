@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,6 +23,8 @@ private slots:
     void image_mouse_pressed(double x, double y);
 
     void on_resample_button_clicked();
+
+    void on_save_image_clicked();
 
 private:
     Ui::MainWindow *ui;

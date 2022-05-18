@@ -149,6 +149,11 @@ void raster_label::set_coords(double xcp, double ycp)
     _ccp = {xcp, ycp};
 }
 
+const QImage *raster_label::get_raster()
+{
+    return raster;
+}
+
 //находит внутренние координаты модели по координатам в окне
 std::unique_ptr<double[]> raster_label::get_coord(int x, int y)
 {

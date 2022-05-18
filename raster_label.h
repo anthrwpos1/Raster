@@ -24,6 +24,7 @@ public:
     void set_coef(double coef);
     void set_steps(double steps);
     void set_coords(double xcp, double ycp);
+    const QImage* get_raster();
     std::unique_ptr<double[]> get_coord(int x, int y);
     ~raster_label();
 Q_SIGNALS:

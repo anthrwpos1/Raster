@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>903</width>
-    <height>689</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -251,6 +251,13 @@
        <widget class="QPushButton" name="resample_button">
         <property name="text">
          <string>подогнать</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="save_image">
+        <property name="text">
+         <string>сохранить</string>
         </property>
        </widget>
       </item>

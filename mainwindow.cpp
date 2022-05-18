@@ -45,3 +45,16 @@ void MainWindow::on_resample_button_clicked()
     ui->image->recreate_raster(ui->size_x->value(), ui->size_y->value());
 }
 
+
+void MainWindow::on_save_image_clicked()
+{
+    QString str = QFileDialog::getSaveFileName(nullptr, "Choose filename");
+    const QImage* raster = ui->image->get_raster();
+    if (!raster->save(str))
+    {
+        QMessageBox* err = new QMessageBox("error", "Не удалось сохранить.", QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+        err->exec();
+        delete err;
+    }
+}
+
