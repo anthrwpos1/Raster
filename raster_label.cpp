@@ -100,20 +100,20 @@ void raster_label::recalculate()
     }
     for (int i = 0; i < ih * iw; ++i) points[i].process(mmax);
     int* ds = new int[mmax]{0};
-    int* ids = new int[mmax];
-    for (int i = 0; i < ih * iw; ++i) ++ds[(int) std::floor(points[i].steps)];
+    int* ids = new int[mmax + 1];
+    for (int i = 0; i < ih * iw; ++i) ds[(int) std::floor(points[i].steps)] += (points[i].steps > 0);
     ids[0] = 0;
-    ds[0] = 0;
-    for (int i = 1; i < mmax; ++i) ids[i] = ids[i-1] + ds[i];
-    double ids_end = ids[mmax - 1];
+    for (int i = 1; i < mmax + 1; ++i) ids[i] = ids[i-1] + ds[i-1];
+    double ids_end = ids[mmax];
+    if(ids_end == 0) ids_end = 1;
     delete[] clrindx;
     clrindx = new double[iw*ih];
     for (int i = 0; i < ih * iw; ++i)
     {
         int fk = std::floor(points[i].steps);
         double dk = points[i].steps - fk;
-        //clrindx[i]=(ids[fk]+dk*ds[fk])/ids_end;
-        clrindx[i] = points[i].steps / 10.0;
+        clrindx[i]=(ids[fk]+dk*ds[fk])/ids_end;
+        //clrindx[i] = points[i].steps / 10.0;
     }
 
     int i = 0;
