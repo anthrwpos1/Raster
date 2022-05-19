@@ -3,7 +3,7 @@
 /*
  * todo
  * - [пофикшено] разобраться с цветом
- *  - найти почему остаются черные точечки
+ * - [пофикшено] найти почему остаются черные точечки
  * - [пофикшено] гистограммная раскраска
  * - многоступенчатая генерация
  * - [сделано] многопоточная генерация
@@ -78,7 +78,8 @@ void imxyz2rgb(double* array, int shift, double* output_array)
         double nonlinear;
         if (linear<=0.0031308) nonlinear = linear*12.92;
         else nonlinear = (1+0.055)*exp(log(linear)*(1/2.4))-0.055;
-        nonlinear = nonlinear * (nonlinear > 0) * (nonlinear < 1) + (nonlinear > 1);
+        if (nonlinear < 0) nonlinear = 0;
+        if (nonlinear > 1) nonlinear = 1;
         output_array[i] = nonlinear*255.0;
     }
 }

@@ -9,17 +9,18 @@
 #include <memory>
 #include "mandelbrot.h"
 
+//вычислительный поток. Берет ближайшую свободную 1000 точек и вычисляет их.
 class calc_thread : public QThread
 {
     Q_OBJECT;
 
-    mandelbrot* _points;
-    QMutex* _index_mutex;
-    int* _index_map;
-    int _max_index;
-    int* _active;
-    int _mmax;
-    int _num;
+    mandelbrot* _points;//точечки изображения
+    QMutex* _index_mutex;//мутех на доступ к переменной хранящей индекс первой непосчитанной точки
+    int* _index_map;//индекс первой непосчитанной точки
+    int _max_index;//всего число точек
+    int* _active;//переменная для прерывания процесса вычисления
+    int _mmax;//число итераций
+    int _num;//порядковый номер потока (для отладки)
 public:
     calc_thread(mandelbrot *points, QMutex *index_mutex, int *index_map, int max_index, int *active, int mmax, int num);
     // QThread interface
@@ -27,6 +28,7 @@ protected:
     void run() override;
 };
 
+//поток обслуживания потоков. Запускает нужное число потоков, отслеживает выполнение работы, прерывает работу, периодически сигнал перерисовать картинку.
 class calc_threads_manager_thread : public QThread
 {
     Q_OBJECT;
@@ -69,7 +71,7 @@ public:
     void recreate_raster(int new_x, int new_y);
     void recalculate();
     void interrupt_calculation();
-    void set_coef(double coef);
+    void set_zoom(double coef);
     void set_steps(double steps);
     void set_coords(double xcp, double ycp);
     bool is_calculations_in_progress();
@@ -78,13 +80,13 @@ public:
     ~raster_label();
 
 public Q_SLOTS:
-    void image_refresh();
+    void image_refresh();//слоты для обновления картинки
     void process_done();
 
 Q_SIGNALS:
-    void mouse_move(QString msg);
-    void mouse_pressed(double xcp, double ycp);
-    void calculation_started();
+    void mouse_move(QString msg);//сигнал движения мышкой, пишет в статусбаре координаты
+    void mouse_pressed(double xcp, double ycp);//сигнал нажатия, записывает координаты клика в поля ввода координат
+    void calculation_started();//сигнал начала вычислений, для смены названия кнопки "обновить" на "прервать"
     void calculation_finished();
 
     // QWidget interface

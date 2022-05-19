@@ -92,6 +92,9 @@
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
              </property>
+             <property name="prefix">
+              <string>2^</string>
+             </property>
              <property name="decimals">
               <number>1</number>
              </property>
@@ -150,12 +153,15 @@
             <widget class="QDoubleSpinBox" name="coord_x">
              <property name="minimumSize">
               <size>
-               <width>120</width>
+               <width>140</width>
                <height>0</height>
               </size>
              </property>
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="prefix">
+              <string>x = </string>
              </property>
              <property name="decimals">
               <number>16</number>
@@ -175,12 +181,15 @@
             <widget class="QDoubleSpinBox" name="coord_y">
              <property name="minimumSize">
               <size>
-               <width>120</width>
+               <width>140</width>
                <height>0</height>
               </size>
              </property>
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
+             </property>
+             <property name="prefix">
+              <string>y = </string>
              </property>
              <property name="decimals">
               <number>16</number>
@@ -224,8 +233,8 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>800</width>
-          <height>600</height>
+          <width>400</width>
+          <height>300</height>
          </size>
         </property>
         <property name="mouseTracking">
@@ -261,6 +270,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="resample_button">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;выставляет координаты&lt;/p&gt;&lt;p&gt;в соответствии с фактическим&lt;/p&gt;&lt;p&gt;размером области изображения&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>подогнать</string>
         </property>

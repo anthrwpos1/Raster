@@ -6,11 +6,11 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->image->recalculate();
     connect(ui->image, &raster_label::mouse_move, this, &MainWindow::image_mouse_move);
     connect(ui->image, &raster_label::mouse_pressed, this, &MainWindow::image_mouse_pressed);
     connect(ui->image, &raster_label::calculation_started, this, &MainWindow::image_calculations_begin);
     connect(ui->image, &raster_label::calculation_finished, this, &MainWindow::image_calculations_end);
+    ui->image->recalculate();
 }
 
 MainWindow::~MainWindow()
@@ -26,10 +26,10 @@ void MainWindow::on_refresh_button_clicked()
     }
     else
     {
-        ui->image->set_coef(ui->coef->value());
+        ui->image->set_zoom(ui->coef->value());
         ui->image->set_steps(ui->steps->value());
-        ui->image->recreate_raster(ui->size_x->value(), ui->size_y->value());
         ui->image->set_coords(ui->coord_x->value(), ui->coord_y->value());
+        ui->image->recreate_raster(ui->size_x->value(), ui->size_y->value());
     }
 }
 
@@ -60,7 +60,7 @@ void MainWindow::on_resample_button_clicked()
     QSize size = ui->image->size();
     ui->size_x->setValue(size.width());
     ui->size_y->setValue(size.height());
-    ui->image->set_coef(ui->coef->value());
+    ui->image->set_zoom(ui->coef->value());
     ui->image->recreate_raster(ui->size_x->value(), ui->size_y->value());
 }
 

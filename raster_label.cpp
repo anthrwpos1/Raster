@@ -71,7 +71,7 @@ color3 interp1(double* RGB, int rgb_size, double clrindex)
     double saw = ((clrindex - t) * (1-2*even)+even) * rgb_size;
     int lowerindex = floor(saw);
     double dindex = saw - lowerindex;
-    if (lowerindex >= rgb_size) return {RGB[rgb_size - 1], RGB[rgb_size * 2 - 1], RGB[rgb_size * 3 - 1]};
+    if (lowerindex >= rgb_size - 1) return {RGB[rgb_size - 1], RGB[rgb_size * 2 - 1], RGB[rgb_size * 3 - 1]};
     double r = RGB[lowerindex] * (1 - dindex) + RGB[lowerindex + 1] * dindex;
     lowerindex += rgb_size;
     double g = RGB[lowerindex] * (1 - dindex) + RGB[lowerindex + 1] * dindex;
@@ -111,7 +111,7 @@ void raster_label::recalculate()
     emit calculation_started();
 }
 
-void raster_label::set_coef(double coef)
+void raster_label::set_zoom(double coef)
 {
     _coef = coef;
 }
