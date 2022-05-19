@@ -64,7 +64,8 @@ class raster_label : public QLabel
     double* RGB = nullptr;
     calc_threads_manager_thread* _process = nullptr;
     int* _threads_manager_active_ptr = nullptr;
-
+    bool julia_mode = false;
+    complex julia_shift = 0;
     void calc_colormodel();
 public:
     raster_label(QWidget *parent = nullptr, const Qt::WindowFlags &f = Qt::WindowFlags());
@@ -75,6 +76,8 @@ public:
     void set_steps(double steps);
     void set_coords(double xcp, double ycp);
     bool is_calculations_in_progress();
+    void set_julia_mode(bool);
+    void set_julia_shift(double x, double y);
     const QImage* get_raster();
     std::unique_ptr<double[]> get_coord(int x, int y);
     ~raster_label();

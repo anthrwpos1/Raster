@@ -105,7 +105,7 @@
               <double>40.000000000000000</double>
              </property>
              <property name="stepType">
-              <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+              <enum>QAbstractSpinBox::DefaultStepType</enum>
              </property>
              <property name="value">
               <double>-3.000000000000000</double>
@@ -282,6 +282,14 @@
        <widget class="QPushButton" name="save_image">
         <property name="text">
          <string>сохранить</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="julia">
+        <property name="text">
+         <string>Множество
+Жюлиа</string>
         </property>
        </widget>
       </item>

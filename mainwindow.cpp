@@ -77,3 +77,31 @@ void MainWindow::on_save_image_clicked()
     }
 }
 
+
+void MainWindow::on_julia_clicked()
+{
+    if (_julia_mode)
+    {
+        ui->coord_x->setValue(_julia_centre_x);
+        ui->coord_y->setValue(_julia_centre_y);
+        ui->coef->setValue(_mandelbrot_zoom);
+        ui->image->set_julia_mode(false);
+        ui->julia->setText("Множество\nЖюлиа");
+        _julia_mode = false;
+    }
+    else
+    {
+        _julia_centre_x = ui->coord_x->value();
+        _julia_centre_y = ui->coord_y->value();
+        _mandelbrot_zoom = ui->coef->value();
+        ui->coord_x->setValue(0);
+        ui->coord_y->setValue(0);
+        ui->coef->setValue(-3.0);
+        ui->image->set_julia_mode(true);
+        ui->image->set_julia_shift(_julia_centre_x, _julia_centre_y);
+        ui->julia->setText("Множество\nМандельброта");
+        _julia_mode = true;
+    }
+    on_refresh_button_clicked();
+}
+

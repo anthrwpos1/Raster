@@ -3,12 +3,7 @@
 void raster_label::mouseMoveEvent(QMouseEvent *event)
 {
     auto coords = get_coord(event->x(), event->y());
-    //int index = y*raster->width() + x;
-    //if (index < raster->width()*raster->height())
-    //{
-    //double point = clrindx[index];
     emit mouse_move("coord x = " + QString::number(coords[0]) + ", coord y = " + QString::number(coords[1]));
-    //}
     QLabel::mouseMoveEvent(event);
 }
 
@@ -100,7 +95,8 @@ void raster_label::recalculate()
         for (int ix = 0; ix < iw; ++ix)
         {
             double cx = x_corner + ix * pixel_size;
-            _points[index++] ={0, {cx, cy}, 0, 0};
+            if (julia_mode) _points[index++] = {{cx, cy}, julia_shift, 0, 0};
+            else _points[index++] ={0, {cx, cy}, 0, 0};
         }
     }
     _process = new calc_threads_manager_thread(_points, iw * ih, _max_steps, 8);
@@ -129,6 +125,16 @@ void raster_label::set_coords(double xcp, double ycp)
 bool raster_label::is_calculations_in_progress()
 {
     return _process != nullptr;
+}
+
+void raster_label::set_julia_mode(bool do_set)
+{
+    julia_mode = do_set;
+}
+
+void raster_label::set_julia_shift(double x, double y)
+{
+    julia_shift = {x, y};
 }
 
 const QImage *raster_label::get_raster()
@@ -249,6 +255,7 @@ void calc_thread::run()
 
 calc_thread::calc_thread(mandelbrot *points, QMutex *index_mutex,
                          int *index_map, int max_index, int *active, int mmax, int num) :
+    QThread(),
     _points(points),
     _index_mutex(index_mutex),
     _index_map(index_map),
@@ -259,7 +266,7 @@ calc_thread::calc_thread(mandelbrot *points, QMutex *index_mutex,
 {}
 
 calc_threads_manager_thread::calc_threads_manager_thread(mandelbrot *points, int max_index, int mmax, int threadnum) :
-    _points(points), _max_index(max_index), _mmax(mmax), _threadnum(threadnum)
+    QThread(), _points(points), _max_index(max_index), _mmax(mmax), _threadnum(threadnum)
 {
 
 }

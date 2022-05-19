@@ -13,6 +13,10 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    double _julia_centre_x = 0;
+    double _julia_centre_y = 0;
+    double _mandelbrot_zoom = 0;
+    bool _julia_mode = false;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -26,6 +30,8 @@ private slots:
     void on_resample_button_clicked();
 
     void on_save_image_clicked();
+
+    void on_julia_clicked();
 
 private:
     Ui::MainWindow *ui;
