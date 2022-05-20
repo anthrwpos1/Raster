@@ -13,7 +13,6 @@
 class calc_thread : public QThread
 {
     Q_OBJECT;
-
     mandelbrot* _points;//точечки изображения
     QMutex* _index_mutex;//мутех на доступ к переменной хранящей индекс первой непосчитанной точки
     int* _index_map;//индекс первой непосчитанной точки
@@ -21,6 +20,7 @@ class calc_thread : public QThread
     int* _active;//переменная для прерывания процесса вычисления
     int _mmax;//число итераций
     int _num;//порядковый номер потока (для отладки)
+    const int _single_task_size = 1000;
 public:
     calc_thread(mandelbrot *points, QMutex *index_mutex, int *index_map, int max_index, int *active, int mmax, int num);
     // QThread interface
@@ -55,20 +55,21 @@ class raster_label : public QLabel
 {
     Q_OBJECT;
 
-    QImage* _raster;
+    std::unique_ptr<QImage> _raster;
     double _coef;
     int _max_steps = 1000;
-    mandelbrot* _points;
-    double* _clrindx = nullptr;
+    int _threadnum = 8;
+    std::unique_ptr<mandelbrot[]> _points;
+    std::unique_ptr<double[]> _clrindx;
     complex _ccp = 0;
-    double* RGB = nullptr;
-    calc_threads_manager_thread* _process = nullptr;
+    std::unique_ptr<double[]> RGB;
+    std::unique_ptr<calc_threads_manager_thread> _process;
     int* _threads_manager_active_ptr = nullptr;
     bool julia_mode = false;
     complex julia_shift = 0;
     void calc_colormodel();
 public:
-    raster_label(QWidget *parent = nullptr, const Qt::WindowFlags &f = Qt::WindowFlags());
+    raster_label(QWidget *parent = nullptr, const Qt::WindowFlags &f = Qt::WindowFlags(), int width = 800, int height = 600, double coef = -3);
     void recreate_raster(int new_x, int new_y);
     void recalculate();
     void interrupt_calculation();
@@ -80,7 +81,7 @@ public:
     void set_julia_shift(double x, double y);
     const QImage* get_raster();
     std::unique_ptr<double[]> get_coord(int x, int y);
-    ~raster_label();
+    ~raster_label() = default;
 
 public Q_SLOTS:
     void image_refresh();//слоты для обновления картинки

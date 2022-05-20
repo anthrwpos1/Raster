@@ -1,6 +1,4 @@
 #include "mainwindow.h"
-#include "QLabel"
-#include "QImage"
 
 #include <QApplication>
 

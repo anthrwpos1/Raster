@@ -13,6 +13,12 @@
  * - псевдо-3д мандельбротка
  *
  * */
+
+const double LOG1E10 = log(1e10);
+const double M_6_OVER_29 = 6/29;
+const double M_4_OVER_29 = 4/29;
+const double M_3_TIMES_6_OVER_29_SQUARED = 3 * M_6_OVER_29 * M_6_OVER_29;
+
 void mandelbrot::process(int mmax)
 {
     double abs2 = 0;
@@ -26,7 +32,7 @@ void mandelbrot::process(int mmax)
     if (step == mmax) steps = 0;
     else
     {
-        steps = step-log(abs2/1e20) / 23.025850929940457;
+        steps = step-log(abs2/1e20) / LOG1E10;
     }
 }
 
@@ -41,7 +47,7 @@ color3 rgb2xyz(const color3& in)
 //психоколориметрическая функция
 double pscol_functuin(double t)
 {
-    return t * t * t * (t > 0.20689655172413793) + (0.12841854934601665 * (t-0.13793103448275862)) * (t <= 0.20689655172413793);
+    return t * t * t * (t > M_6_OVER_29) + (M_3_TIMES_6_OVER_29_SQUARED * (t-M_4_OVER_29)) * (t <= M_6_OVER_29);
 }
 
 //преобразование цвета из психоколориметрической модели CIELab в относительные уровни возбуждения фоторецепторов (без учета выбора точки белого)
